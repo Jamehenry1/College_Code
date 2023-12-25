@@ -1,0 +1,50 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/* 
+ * File:   main.c
+ * Author: nghia
+ *
+ * Created on November 15, 2020, 5:57 PM
+ * Name: Nghia Huynh Lam
+ * UTA ID: 1001699317
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+/*
+ * 11/14/2020
+ * State Cases Population
+ * 
+ */
+int main(int argc, char** argv) {
+    char sName[10];
+    double cases;
+    double pop;
+    
+    FILE *inputFile = fopen("USCOVID19Data.txt","r");
+    
+    if(inputFile == NULL)
+    {
+        return(EXIT_FAILURE);
+    }
+    
+    printf("\nCOVID-19 state data for November 14, 2020\n\n");
+    printf("%2s%10s%15s\n\n","ST","Cases","Population");
+
+    while(!feof(inputFile))
+    {
+        fscanf(inputFile,"%s %lf %lf",sName,&cases,&pop);
+       
+        printf("%2s%10.0f%15.0f\n",sName,cases,pop);
+    }
+    
+    printf("\nAll data has been read from USCOVID19Data.txt\n");
+    
+    return (EXIT_SUCCESS);
+}
+

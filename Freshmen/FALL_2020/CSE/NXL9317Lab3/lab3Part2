@@ -1,0 +1,400 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/* 
+ * File:   main.c
+ * Author: nghia
+ *
+ * Created on November 17, 2020, 6:57 PM
+ * 
+ * Name: Nghia Huynh Lam
+ * UTA ID: 1001699317
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+/*
+ * 
+ */
+double calAvg(int rep,int size,int arr[][size],int c);
+int test1 (int x1,int x2,int x3,int x4, int t);
+double arrCh(int size, double arr[][size],int cE,int c1,int c2,int c3);
+
+int main(int argc, char** argv) {
+    
+    FILE *vFile = fopen("VotingData.txt","r");
+    if(vFile == NULL)
+    {
+        return(EXIT_FAILURE);
+    }
+    
+    int vData[100][4];
+    int index = 0;
+    char line[128];
+    int tRep = 0;
+    int winner = 0;
+    int elim = 0;
+    int elim1 = 0;
+    int elim2 = 0;
+    int elim3 = 0;
+    int time = 0;
+    while((!feof(vFile)&&(index < 100)))
+    {
+        fscanf(vFile, "%d %d %d %d",&vData[index][0],&vData[index][1],&vData[index][2],&vData[index][3]);
+
+        printf("\n%d %d %d %d", vData[index][0],vData[index][1],vData[index][2],vData[index][3]);
+
+        index++;
+        tRep++;
+        
+    }
+    //printf("\ntrial = %d\n",vData[][3]);
+    double P1 = calAvg(tRep,4,vData,0);
+    double P2 = calAvg(tRep,4,vData,1);
+    double P3 = calAvg(tRep,4,vData,2);
+    double P4 = calAvg(tRep,4,vData,3);
+    printf("\n\npoints:\n  P1:%4.2f\n  P2:%4.2f\n  P3:%4.2f\n  P4:%4.2f",P1/tRep,P2/tRep,P3/tRep,P4/tRep);
+    
+    
+    
+    int rHold[5][4];
+    int rH;
+    while(winner == 0)
+    {
+        if(P1 >= (tRep/2))
+        {
+            printf("\n\nThe Winner is P1");
+            winner = 1;
+        }
+        else if(P2 >= (tRep/2))
+        {
+            printf("\n\nThe Winner is P2");
+            winner = 1;
+        }
+        else if(P3 >= (tRep/2))
+        {
+            printf("\n\nThe Winner is P3");
+            winner = 1;
+        }
+        else if(P4 >= (tRep/2))
+        {
+            printf("\n\nThe Winner is P4");
+            winner = 1;
+        }
+        else
+        {
+
+            int Elim1 = test1(P1,P2,P3,P4,time);
+
+            if(Elim1 == 0)
+            {
+                printf("\n\ndoing P1 top--------: %f",P1);
+                for (int r = 0; r < tRep;r++)
+                {
+                    vData[r][0] = 0;
+                    if((vData[r][1] > 1)&&(vData[r][2] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    else if((vData[r][1] == 0)&&(vData[r][2] != 1)&&(vData[r][3] != 1))
+                    {
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    else if((vData[r][2] == 0)&&(vData[r][1] != 1)&&(vData[r][3] != 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    else if((vData[r][3] == 0)&&(vData[r][2] != 1)&&(vData[r][1] != 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    printf("\nT = %d %d %d %d", vData[r][0],vData[r][1],vData[r][2],vData[r][3]);
+                }
+                P1 = calAvg(tRep,4,vData,0);
+                P2 = calAvg(tRep,4,vData,1);
+                P3 = calAvg(tRep,4,vData,2);
+                P4 = calAvg(tRep,4,vData,3);
+                printf("\n\npoints:\n  P1:%4.2f\n  P2:%4.2f\n  P3:%4.2f\n  P4:%4.2f",P1/tRep,P2/tRep,P3/tRep,P4/tRep);
+                
+                
+
+            }
+            if(Elim1 == 1)
+            {
+                printf("\n\ndoing P2 top--------: %f",P2);
+                for (int r = 0; r < tRep;r++)
+                {
+                    vData[r][1] = 0;
+                    if((vData[r][0] > 1)&&(vData[r][2] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][0] = vData[r][0] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][3] = vData[r][3] - 1;  
+                    }
+                    else if((vData[r][0] == 0)&&(vData[r][2] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][3] = vData[r][3] - 1;  
+                    }
+                    else if((vData[r][2] == 1)&&(vData[r][0] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][0] = vData[r][0] - 1;
+                        vData[r][3] = vData[r][3] - 1;  
+                    }
+                    else if((vData[r][3] == 3)&&(vData[r][2] > 1)&&(vData[r][0] > 1))
+                    {
+                        vData[r][0] = vData[r][0] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                    }
+                    printf("\nT = %d %d %d %d", vData[r][0],vData[r][1],vData[r][2],vData[r][3]);
+                }
+                P1 = calAvg(tRep,4,vData,0);
+                P2 = calAvg(tRep,4,vData,1);
+                P3 = calAvg(tRep,4,vData,2);
+                P4 = calAvg(tRep,4,vData,3);
+                printf("\n\npoints:\n  P1:%4.2f\n  P2:%4.2f\n  P3:%4.2f\n  P4:%4.2f",P1/tRep,P2/tRep,P3/tRep,P4/tRep);
+
+            }
+
+            if(Elim1 == 2)
+            {
+                printf("\n\ndoing P3 top--------: %f",P3);
+                for (int r = 0; r < tRep;r++)
+                {
+                    vData[r][2] = 0;
+                    if((vData[r][1] > 1)&&(vData[r][0] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][0] = vData[r][0] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    else if((vData[r][1] == 0)&&(vData[r][0] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][0] = vData[r][0] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    else if((vData[r][0] == 0)&&(vData[r][1] > 1)&&(vData[r][3] > 1))
+                    {
+                        vData[r][1] = vData[r][0] - 1;
+                        vData[r][3] = vData[r][3] - 1;
+                    }
+                    else if((vData[r][3] == 0)&&(vData[r][0] > 1)&&(vData[r][1] > 1))
+                    {
+                        vData[r][0] = vData[r][0] - 1;
+                        vData[r][1] = vData[r][3] - 1;
+                    }
+                    printf("\nT = %d %d %d %d", vData[r][0],vData[r][1],vData[r][2],vData[r][3]);
+                }
+                P1 = calAvg(tRep,4,vData,0);
+                P2 = calAvg(tRep,4,vData,1);
+                P3 = calAvg(tRep,4,vData,2);
+                P4 = calAvg(tRep,4,vData,3);
+                printf("\n\ndoing P3 top: %f",P3);
+                printf("\n\npoints:\n  P1:%4.2f\n  P2:%4.2f\n  P3:%4.2f\n  P4:%4.2f",P1/tRep,P2/tRep,P3/tRep,P4/tRep);
+
+            }
+
+            if(Elim1 == 3)
+            {
+                printf("\n\ndoing P4top--------: %f",P4);
+                for (int r = 0; r < tRep;r++)
+                {
+                    vData[r][3] = 0;
+                    if((vData[r][1] > 1)&&(vData[r][2] > 1)&&(vData[r][0] > 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][0] = vData[r][0] - 1;
+                    }
+                    else if((vData[r][1] == 0)&&(vData[r][2] > 1)&&(vData[r][0] > 1))
+                    {
+                        vData[r][2] = vData[r][2] - 1;
+                        vData[r][0] = vData[r][0] - 1;
+                    }
+                    else if((vData[r][2] == 0)&&(vData[r][1] > 1)&&(vData[r][0] > 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][0] = vData[r][0] - 1;
+                    }
+                    else if((vData[r][0] == 0)&&(vData[r][2] > 1)&&(vData[r][1] > 1))
+                    {
+                        vData[r][1] = vData[r][1] - 1;
+                        vData[r][2] = vData[r][2] - 1;
+                    }
+                    printf("\nT = %d %d %d %d", vData[r][0],vData[r][1],vData[r][2],vData[r][3]);
+                }
+                P1 = calAvg(tRep,4,vData,0);
+                P2 = calAvg(tRep,4,vData,1);
+                P3 = calAvg(tRep,4,vData,2);
+                P4 = calAvg(tRep,4,vData,3);
+                printf("\n\npoints:\n  P1:%4.2f\n  P2:%4.2f\n  P3:%4.2f\n  P4:%4.2f",P1/tRep,P2/tRep,P3/tRep,P4/tRep);
+            }
+            time++;
+  
+        }
+        
+        //double P1 = calAvg(tRep,4,vData,0);
+        //double P2 = calAvg(tRep,4,vData,1);
+        //double P3 = calAvg(tRep,4,vData,2);
+        //double P4 = calAvg(tRep,4,vData,3);
+        //printf("\n\npoints:\n  P1:%4.2f\n  P2:%4.2f\n  P3:%4.2f\n  P4:%4.2f",P1/tRep,P2/tRep,P3/tRep,P4/tRep);
+
+    }
+
+    return (EXIT_SUCCESS);
+}
+
+double calAvg(int rep,int size,int arr[][size],int c)
+{
+    
+    double points = 0;
+    int test = 0;
+    for (int r = 0; r < rep;r++)
+    {
+        //printf("\ntest = %d",arr[r][c]);
+        if(1 == arr[r][c])
+        {
+            points++;
+            //printf("\n\n%d",r);
+        }
+        //printf("\n%d = %d",r,arr[r][c]);
+    }
+    return points;
+}
+
+int test1 (int x1,int x2,int x3,int x4, int t)
+{
+    if(((x1 < x2) && (x1 < x3) && (x1 < x4)&& (x1 != 0)))
+    {
+        printf("\n\ndoing P1");
+        if(x1 == 0)
+        return 0;
+    }
+    if((x2 < x1) && (x2 < x3) && (x2 < x4) && (x2 != 0))
+    {
+        printf("\n\ndoing P2: %d",x2);
+        return 1;
+    }
+    if((x3 < x1)&& (x3 < x2) && (x3 < x4)&& (x3 != 0))
+    {
+        printf("\n\ndoing P3");
+        return 2;
+    }
+    if((x4 < x1)&& (x4 < x2) && (x4 < x3)&& (x4 != 0))
+    {
+        printf("\n\ndoing P4");
+        return 3;
+    }
+    
+    if((x1 == 0))
+    {
+        if((x2 < x3) && (x2 < x4) && (x2 != 0))
+        {
+            printf("\n\ndoing P2: %d",x2);
+            return 1;
+        }
+        if((x3 < x2) && (x3 < x4)&& (x3 != 0))
+        {
+            printf("\n\ndoing P3");
+            return 2;
+        }
+        if((x4 < x2) && (x4 < x3)&& (x4 != 0))
+        {
+            printf("\n\ndoing P4");
+            return 3;
+        }
+    }
+    
+    if((x2 == 0))
+    {
+        if(((x1 < x3) && (x1 < x4)&& (x1 != 0)))
+        {
+            printf("\n\ndoing P1");
+            if(x1 == 0)
+            return 0;
+        }
+
+        if((x3 < x1) && (x3 < x4)&& (x3 != 0))
+        {
+            printf("\n\ndoing P3");
+            return 2;
+        }
+        if((x4 < x1) && (x4 < x3)&& (x4 != 0))
+        {
+            printf("\n\ndoing P4");
+            return 3;
+        }
+
+    }
+    if((x3 == 0))
+    {
+        
+        if(((x1 < x2) && (x1 < x4)&& (x1 != 0)))
+        {
+            printf("\n\ndoing P1");
+            if(x1 == 0)
+            return 0;
+        }
+        if((x2 < x1) && (x2 < x4) && (x2 != 0))
+        {
+            printf("\n\ndoing P2: %d",x2);
+            return 1;
+        }
+
+        if((x4 < x1)&& (x4 < x2)&& (x4 != 0))
+        {
+            printf("\n\ndoing P4");
+            return 3;
+        }
+
+    }
+    if((x4 == 0))
+    {
+        
+        if(((x1 < x2) && (x1 < x3)&& (x1 != 0)))
+        {
+            printf("\n\ndoing P1");
+            if(x1 == 0)
+            return 0;
+        }
+        if((x2 < x1) && (x2 < x3) && (x2 != 0))
+        {
+            printf("\n\ndoing P2: %d",x2);
+            return 1;
+        }
+        if((x3 < x1)&& (x3 < x2)&& (x3 != 0))
+        {
+            printf("\n\ndoing P3");
+            return 2;
+        }
+
+    }
+    
+}
+
+double arrCh(int size, double arr[][size],int cE,int c1,int c2,int c3)
+{
+    for (int r = 0; r < 10;r++)
+    {
+        arr[r][cE] = 0;
+        if((arr[r][c1] != 1)&&(arr[r][c2] != 1)&&(arr[r][c3] != 1))
+        {
+            arr[r][c1] = arr[r][c1] - 1;
+            arr[r][c2] = arr[r][c2] - 1;
+            arr[r][c3] = arr[r][c3] - 1;  
+        }
+
+    }
+
+}

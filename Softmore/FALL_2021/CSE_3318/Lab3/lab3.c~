@@ -1,0 +1,142 @@
+/*
+Name: Nghia Lam 
+ID: 1001699317 
+1)gcc lab3.c 
+2)./a.out < "name of file" or ./a.out 
+3)user input if used ./a.out
+*/
+
+#include <stdio.h>
+#include <string.h>
+
+float p[20];
+int n;
+float c[20][20];
+int trace[20][20];
+
+void tree(int left,int right,int indent)
+{
+	int i;
+
+	if (left==right) // At a leaf in the optimal tree
+	{
+		printf("%*s%d\n",3*indent,"",left);  // Indent and print the index of the matrix
+		return;
+	}
+
+	tree(trace[left][right]+1,right,indent+1);   // Print the right subtree for c(left,right)
+	printf("%*s%d %d cost:%f \n",3*indent,"",left,right, c[left][right]); // Print the root
+	tree(left,trace[left][right],indent+1);      // Print the left subtree for c(left,right)
+}
+
+void bitCount(int i, int j, int key)
+{
+	
+	int count = 0;
+	float prob = 0;
+	//printf("test: %f", p[key]);
+	//printf("test: key = %d trace = %d [%d,%d]\n",key, trace[i][j], i , j);
+	printf("%d ",key);
+	while(i != j)
+	{
+		//printf("%d %s\n",trace[i][j],bit);
+		if(trace[i][j] < key)
+		{
+			printf("1");
+			i = trace[i][j] + 1;
+		}
+		else
+		{
+			printf("0");
+			j = trace[i][j];
+		}
+		//printf("%d \n",trace[i][j]);
+		count++;
+	}
+
+	prob = p[key]*count;
+	printf(" %f\n",prob);
+
+} 
+
+int main()
+{
+	int i,j,k;
+	float pSum = 0;
+	float work;
+
+
+	scanf("%d",&n);
+	for (i=0;i<=n;i++)
+	{
+			scanf("%f",&p[i]);
+	}
+
+	for (i = 0;i <= n;i++)
+	{
+		 c[i][i]=trace[i][i]=0;  // Process base case
+	}
+
+	for (i = 1; i < n; i++)       // The difference between leftmost and rightmost matrix indices
+	{
+		for (j = 0; j <= n - i; j++)  // Leftmost index
+		{
+			printf("Compute c[%d][%d]\n",j,j+i);
+			c[j][j+i]=999999;   // Initialize as infinity, then improve
+
+			// k is the last matrix index for the left subtree, k+1 is the first matrix index for the right subtree
+			for (k=j;k<j+i;k++) 
+			{
+				pSum = 0;
+				for(int c = j; c <= j + i; c++)
+				{
+					pSum += p[c];
+					printf("c = %d i = %d j = %d \npSum(%f) += p[%d] = %f\n", c, i, j, pSum, c, p[c]);
+				}
+				work=c[j][k]+c[k+1][j+i] + pSum;
+				printf("k=%d gives cost %3f=c[%d][%d]+c[%d][%d]+p[%d]*p[%d]*p[%d]\n",
+				k,work,j,k,k+1,j+i,j-1,k,j+i);
+				if (c[j][j+i]>work) // Is work an improvement?
+				{
+					c[j][j+i]=work;
+					trace[j][j+i]=k;
+				}
+			}
+			printf("  c[%d][%d]==%f,trace[%d][%d]==%d\n",j,j+i,c[j][j+i],j,j+i,trace[j][j+i]);
+		}
+	}
+
+	printf("   ");
+	for (i = 0; i<n; i++)
+	{
+		printf("   %8d   ",i);
+	}
+	printf("\n");
+	for (i=0;i<n;i++)
+	{
+		printf("%2d ",i);
+		for ( j=0; j<n; j++)
+		{
+			if (i>j)
+			{
+				printf(" ------------ "); // c(i,j) is not a thing
+			}
+			else
+			{
+				printf(" %3f %3d ",c[i][j],trace[i][j]);
+			}
+		}
+		printf("\n\n");
+	}
+
+	//printf("work %d %d %d", trace[0][1],trace[0][14],trace[0][6]);
+	tree( 0, n-1, 0);  // Print the tree for the optimal strategy
+	int size = n-1;
+	for( i=0; i<n; i++)
+	{
+		//printf("work");
+		bitCount(0,size,i);
+	}
+		printf("Expected bits per Symbol: %f",c[0][size]);
+
+}
